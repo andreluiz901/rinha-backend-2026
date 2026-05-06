@@ -40,8 +40,8 @@ func LoadDataset(path string) (*Dataset, error) {
 	// initial estimative (avoid reallocation)
 	const estimated = 3_000_000
 
-	vectors := make([]float32, 0, estimated*14)
-	labels := make([]uint8, 0, estimated)
+	vectors := make([][14]float32, 0, estimated)
+	labels := make([]int, 0, estimated)
 
 	count := 0
 
@@ -53,7 +53,7 @@ func LoadDataset(path string) (*Dataset, error) {
 		}
 
 		// add vector (flatten)
-		vectors = append(vectors, item.Vector[:]...)
+		vectors = append(vectors, item.Vector)
 
 		// label → uint8
 		if item.Label == "fraud" {

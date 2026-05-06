@@ -2,11 +2,12 @@ package main
 
 import (
     "fmt"
-    // "rinha-fraude/internal/dataset"
-    // "rinha-fraude/internal/search"
-    // "rinha-fraude/internal/score"
+    "rinha-fraude/internal/dataset"
+    "rinha-fraude/internal/search"
+    "rinha-fraude/internal/score"
     "rinha-fraude/internal/types"
     "rinha-fraude/internal/vector"
+    "time"
 )
 
 func buildTestInput() types.FraudRequest {
@@ -54,34 +55,23 @@ func loadMccRisk() map[string]float32 {
 	}
 }
 
+func mockDataset() ([][14]float32, []int) {
+    vectors := [][14]float32{
+        {0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1},
+        {0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9},
+        {0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05},
+    }
+
+    labels := []int{
+        0, // legit
+        1, // fraud
+        0, // legit
+    }
+
+    return vectors, labels
+}
+
 func main() {
-    // fmt.Println("Initing dataset...")
-
-    // ds, err := dataset.LoadDataset("resources/references.json.gz")
-
-    // if err != nil {
-    //     panic(err)
-    // }
-
-    // fmt.Println("Dataset loaded!")
-
-    // input := types.TransactionInput{
-    //     Amount: 5,
-    // }
-
-    // vec := vector.BuildVector(input)
-
-    // neighbors := search.TopK(ds.Vectors, ds.Labels, ds.Size, vec, 5)
-
-    // fraudScore := score.FraudScore(neighbors)
-
-    // approved := fraudScore < 0.6
-
-    // fmt.Println("Result:")
-    // fmt.Println("Score:", fraudScore)
-    // fmt.Println("Approved:", approved)
-
-    // print test vector/normalized vector
 
     normalization := vector.Normalization{
         MaxAmount: 10000,
@@ -94,12 +84,67 @@ func main() {
     }
     
     input := buildTestInput()
-    
+
     vector.SetMccRisk(loadMccRisk())
 
     vec := vector.BuildVector(input, normalization)
     
     fmt.Println("Vector:", vec)
+
+    // using fake dataset
+
+    vectors, labels := mockDataset()
+
+    neighbors := search.TopK(vectors, labels, vec, 2)
+
+    fraudScore := score.FraudScore(neighbors)
+
+    approved := fraudScore < 0.6
+
+    fmt.Println("Score:", fraudScore)
+    fmt.Println("Approved:", approved)
+
+    fmt.Println("Initing dataset...")
+
+    ds, err := dataset.LoadDataset("resources/references.json.gz")
+
+    if err != nil {
+        panic(err)
+    }
+
+    start := time.Now()
+
+    neighbors = search.TopK(ds.Vectors, ds.Labels, vec, 5)
+
+    elapsed := time.Since(start)
+
+    fraudScore = score.FraudScore(neighbors)
+    approved = fraudScore < 0.6
+
+    fmt.Println("Dataset loaded!")
+
+    fmt.Println("Search time:", elapsed)
+    fmt.Println("Score:", fraudScore)
+    fmt.Println("Approved:", approved)
+
+    // input := types.TransactionInput{
+    //     Amount: 5,
+    // }
+
+    // vec := vector.BuildVector(input)
+
+    
+
+    // score := score.FraudScore(neighbors)
+
+    // approved := score < 0.6
+
+    // fmt.Println("Result:")
+    // fmt.Println("Score:", fraudScore)
+    // fmt.Println("Approved:", approved)
+
+    // print test vector/normalized vector
+    
     // fmt.Printf("Vector: %+v\n", vec)
     // for i, v := range vec {
     //    fmt.Printf("[%d] = %.6f\n", i, v)

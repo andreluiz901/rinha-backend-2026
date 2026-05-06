@@ -1,9 +1,9 @@
 package score
 
-import "rinha-fraude/internal/types"
+import "rinha-fraude/internal/search"
 
-func FraudScore(neighbors []types.Neighbor) float32 {
-    var frauds int
+func FraudScore(neighbors []search.Neighbor) float32 {
+    frauds := 0
 
     for _, n := range neighbors {
         if n.Label == 1 {

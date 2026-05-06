@@ -1,39 +1,57 @@
 package search
 
 import (
-    "rinha-fraude/internal/types"
-    "sort"
+    //"rinha-fraude/internal/types"
+    //"sort"
 )
+
+/* 
+    each vector, calculate distance, maitain 5 least
+
+*/
+
+
+type Neighbor struct {
+    Distance float32
+    Label    int // 1 = fraud, 0 = legit
+}
+
+// distance non euclidian, no square root to gain performance, test
 
 func distance(a, b [14]float32) float32 {
     var sum float32
     for i := 0; i < 14; i++ {
-        diff := a[i] - b[i]
-        sum += diff * diff
+        d := a[i] - b[i]
+        sum += d * d
     }
     return sum
 }
 
-func TopK(vectors []float32, labels []uint8, size int, query [14]float32, k int) []types.Neighbor {
-    neighbors := make([]types.Neighbor, 0, size)
+// simplified top k neigh, test
 
-    for i := 0; i < size; i++ {
-        start := i * 14
+func TopK(vectors [][14]float32, labels []int, query [14]float32, k int) []Neighbor {
+    neighbors := make([]Neighbor, 0, k)
 
-        var vec [14]float32
-        copy(vec[:], vectors[start:start+14])
+    for i, v := range vectors {
+        dist := distance(query, v)
 
-        dist := distance(query, vec)
+        if len(neighbors) < k {
+            neighbors = append(neighbors, Neighbor{dist, labels[i]})
+            continue
+        }
 
-        neighbors = append(neighbors, types.Neighbor{
-            Distance: dist,
-            Label:    labels[i],
-        })
+        // find worse (major distance)
+        maxIdx := 0
+        for j := 1; j < k; j++ {
+            if neighbors[j].Distance > neighbors[maxIdx].Distance {
+                maxIdx = j
+            }
+        }
+
+        if dist < neighbors[maxIdx].Distance {
+            neighbors[maxIdx] = Neighbor{dist, labels[i]}
+        }
     }
 
-    sort.Slice(neighbors, func(i, j int) bool {
-        return neighbors[i].Distance < neighbors[j].Distance
-    })
-
-    return neighbors[:k]
+    return neighbors
 }

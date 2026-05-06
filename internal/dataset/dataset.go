@@ -1,19 +1,19 @@
 package dataset
 
 type Dataset struct {
-    Vectors []float32
-    Labels  []uint8
+    Vectors [][14]float32
+    Labels  []int
     Size    int
 }
 
 // fake dataset to test
 func NewMockDataset(n int) *Dataset {
-    vectors := make([]float32, n*14)
-    labels := make([]uint8, n)
+    vectors := make([][14]float32, n)
+    labels := make([]int, n)
 
     for i := 0; i < n; i++ {
         for j := 0; j < 14; j++ {
-            vectors[i*14+j] = float32(i % 10) // simple patter
+            vectors[i][j] = float32(i % 10) // padrão simples
         }
 
         if i%2 == 0 {
