@@ -42,6 +42,9 @@ func LoadDataset(path string) (*Dataset, error) {
 
 	vectors := make([][14]float32, 0, estimated)
 	labels := make([]int, 0, estimated)
+	
+	coarseIndex := make(map[string][]int)
+	broadIndex := make(map[string][]int)
 
 	count := 0
 
@@ -55,12 +58,20 @@ func LoadDataset(path string) (*Dataset, error) {
 		// add vector (flatten)
 		vectors = append(vectors, item.Vector)
 
+		idx := count
+
 		// label → uint8
 		if item.Label == "fraud" {
 			labels = append(labels, 1)
 		} else {
 			labels = append(labels, 0)
 		}
+
+		ck := coarseKey(item.Vector)
+		bk := broadKey(item.Vector)
+
+		coarseIndex[ck] = append(coarseIndex[ck], idx)
+		broadIndex[bk] = append(broadIndex[bk], idx)
 
 		count++
 
@@ -76,5 +87,8 @@ func LoadDataset(path string) (*Dataset, error) {
 		Vectors: vectors,
 		Labels:  labels,
 		Size:    count,
+
+		CoarseIndex: coarseIndex,
+		BroadIndex: broadIndex,
 	}, nil
 }

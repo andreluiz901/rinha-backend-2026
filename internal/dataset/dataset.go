@@ -4,6 +4,9 @@ type Dataset struct {
     Vectors [][14]float32
     Labels  []int
     Size    int
+
+    CoarseIndex  map[string][]int   // specific bucket
+	BroadIndex   map[string][]int   // broad bucket - fallback
 }
 
 // fake dataset to test

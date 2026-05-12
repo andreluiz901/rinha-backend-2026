@@ -3,8 +3,8 @@ package api
 import (
 	"encoding/json"
 	"net/http"
-	"time"
-	"fmt"
+	//"time"
+	//"fmt"
 
 	"rinha-fraude/internal/engine"
 	"rinha-fraude/internal/types"
@@ -29,14 +29,18 @@ func (h *Handler) FraudScore(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
+		//fmt.Println("decode error:", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	
-	start := time.Now()
+	//start := time.Now()
 	approved, fraudScore := h.Engine.Predict(req)
-	elapsed := time.Since(start)
-	fmt.Println("predict:", elapsed)
+	//elapsed := time.Since(start)
+	// const debug = true
+	// if debug {
+	// 	fmt.Println("predict:", elapsed)
+	// }
 
 	resp := FraudResponse{
 		Approved:   approved,
