@@ -1,17 +1,21 @@
 package search
 
+import "rinha-fraude/internal/dataset"
+
 type Neighbor struct {
 	Distance float32
-	Label    int
+	Label    uint8
 }
 
 // distance non euclidian, no square root to gain performance, test
 
-func distance(a, b [14]float32) float32 {
+func distance(a [14]float32, b dataset.Vector) float32 {
 	var sum float32
 
+	
 	for i := 0; i < 14; i++ {
-		d := a[i] - b[i]
+		bv := dataset.Dequantize(b[i])
+		d := a[i] - bv
 		sum += d * d
 	}
 
@@ -21,11 +25,11 @@ func distance(a, b [14]float32) float32 {
 // simplified top k neigh, test
 
 func TopK(
-	vectors [][14]float32,
-	labels []int,
+	vectors []dataset.Vector,
+	labels []uint8,
 	query [14]float32,
 	k int,
-    candidates []int,
+  candidates []int,
 ) []Neighbor {
 
 	neighbors := make([]Neighbor, 0, k)

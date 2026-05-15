@@ -1,41 +1,51 @@
 package dataset
 
-import "fmt"
+func coarseKey(v [14]float32) uint32 {
 
-func coarseKey(v [14]float32) string {
+	a := uint32(v[0] * 10)
+	b := uint32(v[2] * 10)
+	c := uint32(v[7] * 10)
+	d := uint32(v[12] * 10)
 
-	amountBucket := int(v[0] * 20)
-	hourBucket := int(v[3] * 6)
-	mccBucket := int(v[12] * 10)
+	return (a << 24) | (b << 16) | (c << 8) | d
 
-	flags :=
-		int(v[9])*4 +
-		int(v[10])*2 +
-		int(v[11])
+	// amountBucket := int(v[0] * 20)
+	// hourBucket := int(v[3] * 6)
+	// mccBucket := int(v[12] * 10)
 
-	return fmt.Sprintf(
-		"%02d|%02d|%02d|%d",
-		amountBucket,
-		hourBucket,
-		mccBucket,
-		flags,
-	)
+	// flags :=
+	// 	int(v[9])*4 +
+	// 	int(v[10])*2 +
+	// 	int(v[11])
+
+	// return fmt.Sprintf(
+	// 	"%02d|%02d|%02d|%d",
+	// 	amountBucket,
+	// 	hourBucket,
+	// 	mccBucket,
+	// 	flags,
+	// )
 }
 
-func broadKey(v [14]float32) string {
+func broadKey(v [14]float32) uint32 {
 
-	mccBucket := int(v[12] * 10)
+	a := uint32(v[0] * 5)
+	b := uint32(v[2] * 5)
 
-	flags :=
-		int(v[9])*4 +
-		int(v[10])*2 +
-		int(v[11])
+	return (a << 8) | b
 
-	return fmt.Sprintf(
-		"%02d|%d",
-		mccBucket,
-		flags,
-	)
+	// mccBucket := int(v[12] * 10)
+
+	// flags :=
+	// 	int(v[9])*4 +
+	// 	int(v[10])*2 +
+	// 	int(v[11])
+
+	// return fmt.Sprintf(
+	// 	"%02d|%d",
+	// 	mccBucket,
+	// 	flags,
+	// )
 }
 
 func (d *Dataset) Candidates(q [14]float32) []int {

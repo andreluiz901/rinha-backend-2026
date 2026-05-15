@@ -5,6 +5,7 @@ import (
 	"net/http"
 	//"time"
 	//"fmt"
+	//"os"
 
 	"rinha-fraude/internal/engine"
 	"rinha-fraude/internal/types"
@@ -20,6 +21,7 @@ type FraudResponse struct {
 }
 
 func (h *Handler) FraudScore(w http.ResponseWriter, r *http.Request) {
+
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return

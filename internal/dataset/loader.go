@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"runtime"
 )
 
 type rawItem struct {
@@ -40,11 +41,11 @@ func LoadDataset(path string) (*Dataset, error) {
 	// initial estimative (avoid reallocation)
 	const estimated = 3_000_000
 
-	vectors := make([][14]float32, 0, estimated)
-	labels := make([]int, 0, estimated)
+	vectors := make([]Vector, 0, estimated)
+	labels := make([]uint8, 0, estimated)
 	
-	coarseIndex := make(map[string][]int)
-	broadIndex := make(map[string][]int)
+	coarseIndex := make(map[uint32][]int)
+	broadIndex := make(map[uint32][]int)
 
 	count := 0
 
@@ -55,8 +56,14 @@ func LoadDataset(path string) (*Dataset, error) {
 			return nil, err
 		}
 
-		// add vector (flatten)
-		vectors = append(vectors, item.Vector)
+		
+		var compact Vector
+
+		for i := 0; i < 14; i++ {
+			compact[i] = Quantize(item.Vector[i])
+		}
+
+		vectors = append(vectors, compact)
 
 		idx := count
 
@@ -82,6 +89,13 @@ func LoadDataset(path string) (*Dataset, error) {
 	}
 
 	fmt.Println("Total carregado:", count)
+
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+
+	fmt.Printf("HeapAlloc = %.2f MB\n", float64(m.HeapAlloc)/1024/1024)
+	fmt.Printf("Sys = %.2f MB\n", float64(m.Sys)/1024/1024)
+	fmt.Printf("NumGC = %d\n", m.NumGC)
 
 	return &Dataset{
 		Vectors: vectors,
