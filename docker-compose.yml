@@ -1,6 +1,6 @@
 services:
   api1:
-    image: image: andreluizsilvadev/rinha-fraude:v4
+    image: andreluizsilvadev/rinha-fraude:v4
     container_name: api1
     restart: unless-stopped
     mem_limit: 160m
