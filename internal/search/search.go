@@ -14,15 +14,13 @@ func distance(a [14]float32, b dataset.Vector) float32 {
 
 	
 	for i := 0; i < 14; i++ {
-		bv := dataset.Dequantize(b[i])
+		bv := dataset.DequantTable[b[i]] // change strategy to avoid tail data(?)
 		d := a[i] - bv
 		sum += d * d
 	}
 
 	return sum
 }
-
-// simplified top k neigh, test
 
 func TopK(
 	vectors []dataset.Vector,
@@ -32,59 +30,33 @@ func TopK(
   candidates []int,
 ) []Neighbor {
 
-	neighbors := make([]Neighbor, 0, k)
-
-	// fallback → scan total
+	// no candidates → immediate return(abort)
 	if len(candidates) == 0 {
-
-		for i := 0; i < len(vectors); i++ {
-
-			dist := distance(query, vectors[i])
-
-			if len(neighbors) < k {
-
-				neighbors = append(neighbors, Neighbor{
-					Distance: dist,
-					Label: labels[i],
-				})
-
-				continue
-			}
-
-			worst := 0
-
-			for j := 1; j < k; j++ {
-				if neighbors[j].Distance > neighbors[worst].Distance {
-					worst = j
-				}
-			}
-
-			if dist < neighbors[worst].Distance {
-				neighbors[worst] = Neighbor{
-					Distance: dist,
-					Label: labels[i],
-				}
-			}
-		}
-
-		return neighbors
+		return nil
 	}
+
+	//neighbors := make([]Neighbor, 0, k)
+	var neighbors [5]Neighbor
+	count := 0
 
 	// candidates-only scan
 	for _, idx := range candidates {
 
 		dist := distance(query, vectors[idx])
 
-		if len(neighbors) < k {
+		// filling topK
+		if count < k {
 
-			neighbors = append(neighbors, Neighbor{
+			neighbors[count] = Neighbor{
 				Distance: dist,
-				Label: labels[idx],
-			})
+				Label:    labels[idx],
+			}
 
+			count++
 			continue
 		}
 
+		// find worst neigh
 		worst := 0
 
 		for j := 1; j < k; j++ {
@@ -93,6 +65,7 @@ func TopK(
 			}
 		}
 
+		// substitutes if best
 		if dist < neighbors[worst].Distance {
 
 			neighbors[worst] = Neighbor{
@@ -102,5 +75,5 @@ func TopK(
 		}
 	}
 
-	return neighbors   
+	return neighbors[:count]
 }

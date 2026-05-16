@@ -55,5 +55,11 @@ func (h *Handler) FraudScore(w http.ResponseWriter, r *http.Request) {
 }
 
 func Ready(w http.ResponseWriter, r *http.Request) {
+
+	if !ReadyState.Load() {
+		w.WriteHeader(http.StatusServiceUnavailable)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 }

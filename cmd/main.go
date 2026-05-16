@@ -18,13 +18,14 @@ func main() {
     vector.SetMccRisk(config.DefaultMccRisk())
 
     //fmt.Println("Initing dataset...")
-
+    api.ReadyState.Store(false)
     ds, err := dataset.LoadDataset("resources/references.json.gz")
 
     if err != nil {
         panic(err)
     }
     //fmt.Println("Dataset loaded!")
+    api.ReadyState.Store(true)
 
     eng := &engine.Engine{
         Dataset: ds,

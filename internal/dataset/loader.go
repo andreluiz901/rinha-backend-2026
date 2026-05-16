@@ -93,10 +93,9 @@ func LoadDataset(path string) (*Dataset, error) {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
 
-	fmt.Printf("HeapAlloc = %.2f MB\n", float64(m.HeapAlloc)/1024/1024)
-	fmt.Printf("Sys = %.2f MB\n", float64(m.Sys)/1024/1024)
-	fmt.Printf("NumGC = %d\n", m.NumGC)
-
+	// fmt.Printf("HeapAlloc = %.2f MB\n", float64(m.HeapAlloc)/1024/1024)
+	// fmt.Printf("Sys = %.2f MB\n", float64(m.Sys)/1024/1024)
+	// fmt.Printf("NumGC = %d\n", m.NumGC)
 	return &Dataset{
 		Vectors: vectors,
 		Labels:  labels,

@@ -1,13 +1,14 @@
 services:
   api1:
-    image: andreluizsilvadev/rinha-fraude:latest
+    build: .
+    image: fraud-api-local
     container_name: api1
     restart: unless-stopped
     mem_limit: 160m
     cpus: 0.40
-  
   api2:
-    image: andreluizsilvadev/rinha-fraude:latest
+    build: .
+    image: fraud-api-local
     container_name: api2
     restart: unless-stopped
     mem_limit: 160m

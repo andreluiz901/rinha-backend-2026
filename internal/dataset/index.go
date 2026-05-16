@@ -1,66 +1,75 @@
 package dataset
 
+const maxCandidates = 32
+
+func limitCandidates(ids []int, max int) []int {
+	if len(ids) <= max {
+		return ids
+	}
+
+	out := make([]int, 0, max)
+	step := len(ids) / max
+	if step < 1 {
+		step = 1
+	}
+
+	for i := 0; i < len(ids) && len(out) < max; i += step {
+		out = append(out, ids[i])
+	}
+
+	return out
+}
+
 func coarseKey(v [14]float32) uint32 {
 
-	a := uint32(v[0] * 10)
-	b := uint32(v[2] * 10)
-	c := uint32(v[7] * 10)
-	d := uint32(v[12] * 10)
+	amount := uint32(v[0] * 8)   // more granular
+	hour := uint32(v[3] * 6)
+	day := uint32(v[4] * 7)
+	tx := uint32(v[8] * 4)
+	mcc := uint32(v[12] * 10)
 
-	return (a << 24) | (b << 16) | (c << 8) | d
+	flags := uint32(v[9])<<2 | uint32(v[10])<<1 | uint32(v[11])
 
-	// amountBucket := int(v[0] * 20)
-	// hourBucket := int(v[3] * 6)
-	// mccBucket := int(v[12] * 10)
+	return (amount << 24) | (hour << 20) | (day << 16) | (tx << 12) | (flags << 8) | mcc
 
-	// flags :=
-	// 	int(v[9])*4 +
-	// 	int(v[10])*2 +
-	// 	int(v[11])
 
-	// return fmt.Sprintf(
-	// 	"%02d|%02d|%02d|%d",
-	// 	amountBucket,
-	// 	hourBucket,
-	// 	mccBucket,
-	// 	flags,
-	// )
+	// a := uint32(v[0] * 10)
+	// b := uint32(v[2] * 10)
+	// c := uint32(v[7] * 10)
+	// d := uint32(v[12] * 10)
+
+	// return (a << 24) | (b << 16) | (c << 8) | d
+
 }
 
 func broadKey(v [14]float32) uint32 {
+	amount := uint32(v[0] * 4)
+	tx := uint32(v[8] * 2)
+	flags := uint32(v[9])<<2 | uint32(v[10])<<1 | uint32(v[11])
 
-	a := uint32(v[0] * 5)
-	b := uint32(v[2] * 5)
+	return (amount << 8) | (tx << 4) | flags
 
-	return (a << 8) | b
+	// less buckets, broader buckets
+	// a := uint32(v[0] * 2)
+	// b := uint32(v[2] * 2)
 
-	// mccBucket := int(v[12] * 10)
+	// return (a << 8) | b
 
-	// flags :=
-	// 	int(v[9])*4 +
-	// 	int(v[10])*2 +
-	// 	int(v[11])
-
-	// return fmt.Sprintf(
-	// 	"%02d|%d",
-	// 	mccBucket,
-	// 	flags,
-	// )
 }
 
 func (d *Dataset) Candidates(q [14]float32) []int {
 
 	ck := coarseKey(q)
 
-	if ids := d.CoarseIndex[ck]; len(ids) >= 32 {
-		return ids
+	if ids := d.CoarseIndex[ck]; len(ids) >= 0 {
+		return limitCandidates(ids, maxCandidates)
 	}
 
 	bk := broadKey(q)
 
 	if ids := d.BroadIndex[bk]; len(ids) > 0 {
-		return ids
+		return limitCandidates(ids, maxCandidates)
 	}
 
-	return nil
+	return d.BroadIndex[broadKey(q)] // if nil, any qyery without vectors could try to 3M search --> no full scan
 }
