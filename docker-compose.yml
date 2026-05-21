@@ -1,6 +1,5 @@
 services:
   api1:
-    build: .
     image: andreluizsilvadev/rinha-fraude:latest
     container_name: api1
     #restart: unless-stopped
@@ -13,7 +12,6 @@ services:
       #GODEBUG: gctrace=1
       
   api2:
-    build: .
     image: andreluizsilvadev/rinha-fraude:latest
     container_name: api2
     #restart: unless-stopped
