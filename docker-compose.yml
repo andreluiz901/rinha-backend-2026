@@ -1,7 +1,7 @@
 services:
   api1:
     build: .
-    #image: fraud-api-local
+    image: andreluizsilvadev/rinha-fraude:latest
     container_name: api1
     #restart: unless-stopped
 
@@ -14,7 +14,7 @@ services:
       
   api2:
     build: .
-    #image: fraud-api-local
+    image: andreluizsilvadev/rinha-fraude:latest
     container_name: api2
     #restart: unless-stopped
 
