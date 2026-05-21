@@ -7,6 +7,7 @@ import (
 	"rinha-fraude/internal/types"
 	"rinha-fraude/internal/vector"
 	//"fmt"
+	//"time"
 )
 
 type Engine struct {
@@ -15,12 +16,14 @@ type Engine struct {
 }
 
 func (e *Engine) Predict(req types.FraudRequest) (bool, float32) {
+	//start1 := time.Now()
 	vec := vector.BuildVector(req, e.Normalization)
+	//fmt.Println("vector:", time.Since(start1))
 
 	candidates := e.Dataset.Candidates(vec)
 
 	//fmt.Println("candidates:", len(candidates))
-	
+	//start2 := time.Now()
 	neighbors := search.TopK(
 		e.Dataset.Vectors,
 		e.Dataset.Labels,
@@ -28,6 +31,7 @@ func (e *Engine) Predict(req types.FraudRequest) (bool, float32) {
 		5,
 		candidates,
 	)
+	//fmt.Println("topk:", time.Since(start2))
 
 	fraudScore := score.FraudScore(neighbors)
 

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"runtime"
 )
 
 type rawItem struct {
@@ -44,8 +43,8 @@ func LoadDataset(path string) (*Dataset, error) {
 	vectors := make([]Vector, 0, estimated)
 	labels := make([]uint8, 0, estimated)
 	
-	coarseIndex := make(map[uint32][]int)
-	broadIndex := make(map[uint32][]int)
+	coarseIndex := make(map[uint32][]uint32)
+	broadIndex := make(map[uint32][]uint32)
 
 	count := 0
 
@@ -65,7 +64,7 @@ func LoadDataset(path string) (*Dataset, error) {
 
 		vectors = append(vectors, compact)
 
-		idx := count
+		idx := uint32(count)
 
 		// label → uint8
 		if item.Label == "fraud" {
@@ -90,8 +89,8 @@ func LoadDataset(path string) (*Dataset, error) {
 
 	fmt.Println("Total carregado:", count)
 
-	var m runtime.MemStats
-	runtime.ReadMemStats(&m)
+	// var m runtime.MemStats
+	// runtime.ReadMemStats(&m)
 
 	// fmt.Printf("HeapAlloc = %.2f MB\n", float64(m.HeapAlloc)/1024/1024)
 	// fmt.Printf("Sys = %.2f MB\n", float64(m.Sys)/1024/1024)

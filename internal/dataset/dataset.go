@@ -5,8 +5,8 @@ type Dataset struct {
     Labels  []uint8
     Size    int
 
-    CoarseIndex  map[uint32][]int   // specific bucket
-	BroadIndex   map[uint32][]int   // broad bucket - fallback
+    CoarseIndex  map[uint32][]uint32   // specific bucket
+	BroadIndex   map[uint32][]uint32   // broad bucket - fallback
 }
 
 // fake dataset to test

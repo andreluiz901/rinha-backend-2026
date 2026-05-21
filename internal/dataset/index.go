@@ -1,13 +1,15 @@
 package dataset
 
+//import "fmt"
+
 const maxCandidates = 32
 
-func limitCandidates(ids []int, max int) []int {
+func limitCandidates(ids []uint32, max int) []uint32 {
 	if len(ids) <= max {
 		return ids
 	}
 
-	out := make([]int, 0, max)
+	out := make([]uint32, 0, max)
 	step := len(ids) / max
 	if step < 1 {
 		step = 1
@@ -57,11 +59,11 @@ func broadKey(v [14]float32) uint32 {
 
 }
 
-func (d *Dataset) Candidates(q [14]float32) []int {
+func (d *Dataset) Candidates(q [14]float32) []uint32 {
 
 	ck := coarseKey(q)
 
-	if ids := d.CoarseIndex[ck]; len(ids) >= 0 {
+	if ids := d.CoarseIndex[ck]; len(ids) > 0 {
 		return limitCandidates(ids, maxCandidates)
 	}
 
@@ -71,5 +73,7 @@ func (d *Dataset) Candidates(q [14]float32) []int {
 		return limitCandidates(ids, maxCandidates)
 	}
 
-	return d.BroadIndex[broadKey(q)] // if nil, any qyery without vectors could try to 3M search --> no full scan
+	// if nil, any qyery without vectors could try to 3M search --> no full scan
+	// return d.BroadIndex[broadKey(q)] 
+	return nil
 }

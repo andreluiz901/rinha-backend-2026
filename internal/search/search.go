@@ -27,7 +27,7 @@ func TopK(
 	labels []uint8,
 	query [14]float32,
 	k int,
-  candidates []int,
+  candidates []uint32,
 ) []Neighbor {
 
 	// no candidates → immediate return(abort)
@@ -41,15 +41,16 @@ func TopK(
 
 	// candidates-only scan
 	for _, idx := range candidates {
+		i := int(idx)
 
-		dist := distance(query, vectors[idx])
+		dist := distance(query, vectors[i])
 
 		// filling topK
 		if count < k {
 
 			neighbors[count] = Neighbor{
 				Distance: dist,
-				Label:    labels[idx],
+				Label:    labels[i],
 			}
 
 			count++
@@ -70,7 +71,7 @@ func TopK(
 
 			neighbors[worst] = Neighbor{
 				Distance: dist,
-				Label: labels[idx],
+				Label: labels[i],
 			}
 		}
 	}

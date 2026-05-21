@@ -11,5 +11,9 @@ func FraudScore(neighbors []search.Neighbor) float32 {
         }
     }
 
+    if len(neighbors) == 0 {
+        return 1
+    }
+    
     return float32(frauds) / float32(len(neighbors))
 }
