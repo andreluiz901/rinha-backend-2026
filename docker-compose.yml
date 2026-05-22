@@ -4,8 +4,8 @@ services:
     container_name: api1
     #restart: unless-stopped
 
-    mem_limit: 166m
-    cpus: 0.45
+    mem_limit: 164m
+    cpus: 0.46
 
     #environment:
      # GOGC: 300
@@ -16,8 +16,8 @@ services:
     container_name: api2
     #restart: unless-stopped
 
-    mem_limit: 166m
-    cpus: 0.45
+    mem_limit: 164m
+    cpus: 0.46
 
     #environment:
      # GOGC: 300
@@ -53,5 +53,5 @@ services:
       - api1
       - api2
 
-    mem_limit: 12m
+    mem_limit: 20m
     cpus: "0.1"
