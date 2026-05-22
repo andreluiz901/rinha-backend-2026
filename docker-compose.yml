@@ -5,7 +5,7 @@ services:
     #restart: unless-stopped
 
     mem_limit: 164m
-    cpus: 0.46
+    cpus: 0.45
 
     #environment:
      # GOGC: 300
@@ -17,7 +17,7 @@ services:
     #restart: unless-stopped
 
     mem_limit: 164m
-    cpus: 0.46
+    cpus: 0.45
 
     #environment:
      # GOGC: 300
