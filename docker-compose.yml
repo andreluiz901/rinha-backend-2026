@@ -1,11 +1,10 @@
 services:
   api1:
-    build: .
     image: andreluizsilvadev/rinha-fraude:latest
     container_name: api1
     #restart: unless-stopped
 
-    mem_limit: 166m
+    mem_limit: 164m
     cpus: 0.46
 
     #environment:
@@ -13,12 +12,11 @@ services:
       #GODEBUG: gctrace=1
       
   api2:
-    build: .
     image: andreluizsilvadev/rinha-fraude:latest
     container_name: api2
     #restart: unless-stopped
 
-    mem_limit: 166m
+    mem_limit: 164m
     cpus: 0.46
 
     #environment:
@@ -55,5 +53,5 @@ services:
       - api1
       - api2
 
-    mem_limit: 12m
+    mem_limit: 20m
     cpus: "0.1"
