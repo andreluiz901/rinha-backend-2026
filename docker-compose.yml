@@ -39,6 +39,7 @@ services:
   #     - api1
   #     - api2
 
+
   haproxy:
     image: haproxy:3.0-alpine
     container_name: haproxy
