@@ -2,7 +2,7 @@ package dataset
 
 //import "fmt"
 
-const maxCandidates = 32
+const maxCandidates = 128
 
 func limitCandidates(ids []uint32, max int) []uint32 {
 	if len(ids) <= max {
