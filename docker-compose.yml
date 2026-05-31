@@ -1,6 +1,6 @@
 services:
   api1:
-    image: andreluizsilvadev/rinha-fraude:v10
+    image: andreluizsilvadev/rinha-fraude:v11
     container_name: api1
     #restart: unless-stopped
 
@@ -12,7 +12,7 @@ services:
       #GODEBUG: gctrace=1
       
   api2:
-    image: andreluizsilvadev/rinha-fraude:v10
+    image: andreluizsilvadev/rinha-fraude:v11
     container_name: api2
     #restart: unless-stopped
 
